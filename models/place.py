@@ -81,3 +81,27 @@ class Place(BaseModel, Base):
             """ Appends amenity ids to the attribute """
             if type(obj) is Amenity and obj.id not in self.amenity_ids:
                 self.amenity_ids.append(obj.id)
+
+        def __init__(self, *args, **kwargs):
+            """Instantiates a new Place"""
+            if 'city_id' not in kwargs:
+                self.city_id = ""
+            if 'user_id' not in kwargs:
+                self.user_id = ""
+            if 'name' not in kwargs:
+                self.name = ""
+            if 'description' not in kwargs:
+                self.description = ""
+            if 'number_rooms' not in kwargs:
+                self.number_rooms = 0
+            if 'number_bathrooms' not in kwargs:
+                self.number_bathrooms = 0
+            if 'max_guest' not in kwargs:
+                self.max_guest = 0
+            if 'price_by_night' not in kwargs:
+                self.price_by_night = 0
+            if 'latitude' not in kwargs:
+                self.latitude = None
+            if 'longitude' not in kwargs:
+                self.longitude = None
+            super().__init__(*args, **kwargs)
