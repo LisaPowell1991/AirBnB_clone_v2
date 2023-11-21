@@ -1,13 +1,23 @@
 #!/usr/bin/python3
+
 """This is the file storage class for AirBnB"""
+
 import json
+
 from models.base_model import BaseModel
+
 from models.user import User
+
 from models.state import State
+
 from models.city import City
+
 from models.amenity import Amenity
+
 from models.place import Place
+
 from models.review import Review
+
 import shlex
 
 
@@ -22,27 +32,18 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        def all(self, cls=None):
-            """
-    Returns a dictionary of objects in the internal storage, optionally filtered by class type.
+        """Returns a dictionary or a list of objects in the internal storage, filtered by class type if provided.
 
-    Args:
-        cls (Optional): The class type for filtering objects. If cls is None, return all objects.
+        Args:
+            cls (Optional): The class type for filtering objects. If cls is None, return all objects.
 
-    Returns:
-        Dictionary: A dictionary of objects.
-    """
-    dic = {}
-    if cls:
-        dictionary = self.__objects
-        for key in dictionary:
-            partition = key.replace('.', ' ')
-            partition = shlex.split(partition)
-            if partition[0] == cls.__name__:
-                dic[key] = self.__objects[key]
-        return dic
-    else:
-        return self.__objects
+        Returns:
+            Dict or List: A dictionary or a list of objects.
+        """
+        if cls:
+            return {k: v for k, v in self.__objects.items() if isinstance(v, cls)}
+        else:
+            return list(self.__objects.values())
 
     def new(self, obj):
         """sets __object to given obj
@@ -67,23 +68,22 @@ class FileStorage:
         """
         try:
             with open(self.__file_path, 'r', encoding="UTF-8") as f:
-                for key, value in (json.load(f)).items():
+                for key, value in json.load(f).items():
                     value = eval(value["__class__"])(**value)
                     self.__objects[key] = value
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
-        """ delete obj from __objects if it's inside.
-
-        Args:
-        obj: The object to be deleted. If obj is None, the method does nothing
+        """delete an existing element
         """
-        if obj is not None:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            del self.__objects[key]
+        if obj:
+            obj_key = "{}.{}".format(type(obj).__name__, obj.id)
+            if obj_key in self.__objects:
+                del self.__objects[obj_key]
 
     def close(self):
-        """ calls reload()
+        """calls reload()
         """
         self.reload()
+
