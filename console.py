@@ -2,6 +2,7 @@
 """ Console Module """
 import cmd
 import sys
+from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -160,6 +161,9 @@ class HBNBCommand(cmd.Cmd):
 
             # Store the attribute key-value pair
             attributes[key] = value
+
+            # Provide a default value for 'updated_at' if not present
+            attributes['updated_at'] = attributes.get('updated_at', datetime.utcnow())
 
         # Create an instance of the specified class
         new_instance = HBNBCommand.classes[class_name](**attributes)
