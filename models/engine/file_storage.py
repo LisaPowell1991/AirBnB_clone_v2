@@ -33,10 +33,8 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary or a list of objects in the internal storage, filtered by class type if provided.
-
         Args:
             cls (Optional): The class type for filtering objects. If cls is None, return all objects.
-
         Returns:
             Dict or List: A dictionary or a list of objects.
         """
