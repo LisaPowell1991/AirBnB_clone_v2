@@ -115,15 +115,13 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class with given parameters"""
+        """ Create an object of any class with given parameters """
         if not args:
             print("** class name missing **")
             return
 
         # Split the command into class name and parameters
-        args_list = args.split(' ')
-        class_name = args_list[0]
-        params = args_list[1:]
+        class_name, *params = args.split(' ')
 
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
@@ -161,9 +159,6 @@ class HBNBCommand(cmd.Cmd):
 
             # Store the attribute key-value pair
             attributes[key] = value
-
-            # Provide a default value for 'updated_at' if not present
-            attributes['updated_at'] = attributes.get('updated_at', datetime.utcnow())
 
         # Create an instance of the specified class
         new_instance = HBNBCommand.classes[class_name](**attributes)
