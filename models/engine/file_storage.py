@@ -21,28 +21,16 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self, cls=None):
-        def all(self, cls=None):
-            """
-    Returns a dictionary of objects in the internal storage, optionally filtered by class type.
-
-    Args:
-        cls (Optional): The class type for filtering objects. If cls is None, return all objects.
-
-    Returns:
-        Dictionary: A dictionary of objects.
-    """
-    dic = {}
-    if cls:
-        dictionary = self.__objects
-        for key in dictionary:
-            partition = key.replace('.', ' ')
-            partition = shlex.split(partition)
-            if partition[0] == cls.__name__:
-                dic[key] = self.__objects[key]
-        return dic
-    else:
-        return self.__objects
+def all(self, cls=None):
+    """Returns a dictionary of models currently in storage"""
+        if cls is None:
+            return self.__objects
+        cls_name = cls.__name__
+        dct = {}
+        for key in self.__objects.keys():
+            if key.split('.')[0] == cls_name:
+                dct[key] = self.__objects[key]
+        return dct
 
     def new(self, obj):
         """sets __object to given obj
@@ -73,15 +61,15 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
-    def delete(self, obj=None):
-        """ delete obj from __objects if it's inside.
-
-        Args:
-        obj: The object to be deleted. If obj is None, the method does nothing
-        """
-        if obj is not None:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            del self.__objects[key]
+def delete(self, obj=None):
+    ''' deletes the object obj from the attribute
+            __objects if it's inside it
+        '''
+        if obj is None:
+            return
+        obj_key = obj.to_dict()['__class__'] + '.' + obj.id
+        if obj_key in self.__objects.keys():
+            del self.__objects[obj_key]
 
     def close(self):
         """ calls reload()
