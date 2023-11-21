@@ -32,56 +32,76 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """Returns a dictionary or a list of objects in the internal storage, filtered by class type if provided.
+        """Returns a dictionary or a list of objects in the internal storage,
+        filtered by class type if provided.
         Args:
-            cls (Optional): The class type for filtering objects. If cls is None, return all objects.
+            cls (Optional): The class type for filtering objects.
+            If cls is None, return all objects.
         Returns:
             Dict or List: A dictionary or a list of objects.
         """
-        if cls:
-            return {k: v for k, v in self.__objects.items() if isinstance(v, cls)}
+        if cls is None:
+            return FileStorage.__objects
         else:
-            return list(self.__objects.values())
+            filtered_dict = {
+                    key: value for key, value in FileStorage.__objects.items()
+                    if isinstance(value, cls)
+                    }
+            return filtered_dict
 
     def new(self, obj):
         """sets __object to given obj
         Args:
             obj: given object
         """
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            self.__objects[key] = obj
+        key = obj.to_dict()['__class__'] + '.' + obj.id
+        FileStorage.__objects[key] = obj
 
     def save(self):
-        """serialize the file path to JSON file path
         """
-        my_dict = {}
-        for key, value in self.__objects.items():
-            my_dict[key] = value.to_dict()
-        with open(self.__file_path, 'w', encoding="UTF-8") as f:
-            json.dump(my_dict, f)
+        serialize the file path to JSON file path
+        """
+        with open(FileStorage.__file_path, 'w') as f:
+            temp =
+            {key: val.to_dict() for key, val in FileStorage.__objects.items()}
+            json.dump(temp, f)
 
     def reload(self):
-        """serialize the file path to JSON file path
         """
+        serialize the file path to JSON file path
+        """
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
+
+        classes = {
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+        }
         try:
-            with open(self.__file_path, 'r', encoding="UTF-8") as f:
-                for key, value in json.load(f).items():
-                    value = eval(value["__class__"])(**value)
-                    self.__objects[key] = value
+            with open(FileStorage.__file_path, 'r') as f:
+                temp = json.load(f)
+                for key, val in temp.items():
+                    class_name = val['__class__']
+                    if class_name in classes:
+                        self.all()[key] = classes[class_name](**val)
         except FileNotFoundError:
             pass
 
     def delete(self, obj=None):
-        """delete an existing element
         """
-        if obj:
-            obj_key = "{}.{}".format(type(obj).__name__, obj.id)
-            if obj_key in self.__objects:
-                del self.__objects[obj_key]
+        delete an existing element
+        """
+        if obj is not None:
+            key = obj.to_dict()['__class__'] + '.' + obj.id
+            self.all().pop(key, None)
 
     def close(self):
         """calls reload()
         """
         self.reload()
-
