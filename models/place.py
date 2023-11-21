@@ -19,8 +19,8 @@ place_amenity = Table("place_amenity", Base.metadata,
             nullable=False))
 
 
-        class Place(BaseModel, Base):
-            """This is the class for Place
+class Place(BaseModel, Base):
+    """This is the class for Place
     Attributes:
         city_id: city id
         user_id: user id

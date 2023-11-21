@@ -2,7 +2,6 @@
 """ Console Module """
 import cmd
 import sys
-from datetime import datetime
 from models.base_model import BaseModel
 from models.__init__ import storage
 from models.user import User
@@ -115,7 +114,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class with given parameters """
+        """Create an object with given parameters"""
         if not args:
             print("** class name missing **")
             return
@@ -160,7 +159,7 @@ class HBNBCommand(cmd.Cmd):
             # Store the attribute key-value pair
             attributes[key] = value
 
-        # Create an instance of the specified class
+        # Create an instance of the specified class with the given parameters
         new_instance = HBNBCommand.classes[class_name](**attributes)
 
         # Save the instance and print its ID
