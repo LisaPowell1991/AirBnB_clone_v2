@@ -33,3 +33,8 @@ class State(BaseModel, Base):
             if (elem.state_id == self.id):
                 result.append(elem)
         return (result)
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize State instance """
+        super().__init__(*args, **kwargs)
+        self.name = ""
