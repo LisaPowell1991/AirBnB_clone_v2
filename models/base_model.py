@@ -82,29 +82,3 @@ class BaseModel(Base):
         """ delete object
         """
         models.storage.delete(self)
-
-        class State(BaseModel, Base):
-    """This class will define State attributes/methods for the database table 'states'"""
-    __tablename__ = 'states'
-    name = Column(String(128), nullable=False)
-    cities = relationship("City", backref="state", cascade="all, delete-orphan")
-
-    class City(BaseModel, Base):
-    """This class will define City attributes/methods for the database table 'cities'"""
-    __tablename__ = 'cities'
-    name = Column(String(128), nullable=False)
-    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
-
-
-class DBStorage:
-    """This class will handle storage to database"""
-    __engine = None
-    __session = None
-    cities = relationship("City", backref="state", cascade="all, delete-orphan")
-
-
-
-    class FileStorage:
-    """This class will handle storage to JSON file"""
-    __file_path = "file.json"
-    __objects = {}
