@@ -60,10 +60,10 @@ class test_basemodel(unittest.TestCase):
         """ """
         i = self.value()
         self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         i.__dict__))
+            i.__dict__))
 
-    def test_todict(self):
-        """ """
+        def test_todict(self):
+            """ """
         i = self.value()
         n = i.to_dict()
         self.assertEqual(i.to_dict(), n)

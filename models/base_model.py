@@ -5,16 +5,17 @@ import uuid
 import models
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
-
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
 
-class BaseModel:
+class BaseModel(Base):
     """This class will defines all common attributes/methods
     for other classes
     """
     id = Column(String(60), unique=True, nullable=False, primary_key=True)
+    name = Column(String(128), nullable=False)
     created_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
     updated_at = Column(DateTime, nullable=False, default=(datetime.utcnow()))
 
@@ -53,7 +54,7 @@ class BaseModel:
                 type(self).__name__, self.id, self.__dict__)
 
         def __repr__(self):
-            """return a string representaion
+            """return a string representation
         """
         return self.__str__()
 
@@ -81,3 +82,29 @@ class BaseModel:
         """ delete object
         """
         models.storage.delete(self)
+
+        class State(BaseModel, Base):
+    """This class will define State attributes/methods for the database table 'states'"""
+    __tablename__ = 'states'
+    name = Column(String(128), nullable=False)
+    cities = relationship("City", backref="state", cascade="all, delete-orphan")
+
+    class City(BaseModel, Base):
+    """This class will define City attributes/methods for the database table 'cities'"""
+    __tablename__ = 'cities'
+    name = Column(String(128), nullable=False)
+    state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
+
+
+class DBStorage:
+    """This class will handle storage to database"""
+    __engine = None
+    __session = None
+    cities = relationship("City", backref="state", cascade="all, delete-orphan")
+
+
+
+    class FileStorage:
+    """This class will handle storage to JSON file"""
+    __file_path = "file.json"
+    __objects = {}
