@@ -3,6 +3,7 @@ from unittest.mock import patch
 from io import StringIO
 from console import HBNBCommand
 
+
 class TestHBNBCommand(unittest.TestCase):
 
     @classmethod
@@ -28,6 +29,6 @@ class TestHBNBCommand(unittest.TestCase):
         with self.assertRaises(SystemExit):
             self.hbnb_command.do_quit(None)
 
-    
+
 if __name__ == '__main__':
     unittest.main()
