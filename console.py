@@ -15,20 +15,19 @@ from models.review import Review
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
-
-    # determines prompt for interactive/non-interactive modes
+# determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
 
     classes = {
-               'BaseModel': BaseModel, 'User': User, 'Place': Place,
-               'State': State, 'City': City, 'Amenity': Amenity,
-               'Review': Review
-              }
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+            }
     dot_cmds = ['all', 'count', 'show', 'destroy', 'update']
     types = {
-             'number_rooms': int, 'number_bathrooms': int,
-             'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+            'number_rooms': int, 'number_bathrooms': int,
+            'max_guest': int, 'price_by_night': int,
+            'latitude': float, 'longitude': float
             }
 
     def preloop(self):
@@ -38,7 +37,6 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -47,7 +45,6 @@ class HBNBCommand(cmd.Cmd):
         # scan for general formating - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
             return line
-
         try:  # parse line left to right
             pline = line[:]  # parsed line
 
@@ -73,10 +70,10 @@ class HBNBCommand(cmd.Cmd):
                 # if arguments exist beyond _id
                 pline = pline[2].strip()  # pline is now str
                 if pline:
-                    # check for *args or **kwargs
-                    if pline[0] == '{' and pline[-1] == '}'\
+# check for *args or **kwargs
+if pline[0] == '{' and pline[-1] == '}'\
                             and type(eval(pline)) is dict:
-                        _args = pline
+                                _args = pline
                     else:
                         _args = pline.replace(',', '')
                         # _args = _args.replace('\"', '')
@@ -116,11 +113,10 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-
-
         """ Create an object of any class"""
 
-        try:
+
+try:
             if not args:
                 raise SyntaxError()
             arg_list = args.split(" ")
@@ -129,16 +125,17 @@ class HBNBCommand(cmd.Cmd):
                 arg_splited = arg.split("=")
                 arg_splited[1] = eval(arg_splited[1])
                 if type(arg_splited[1]) is str:
-                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-                kw[arg_splited[0]] = arg_splited[1]
-        except SyntaxError:
+                    arg_splited[1] = arg_splited[1].replace("_", " ")\
+                            .replace('"', '\\"')
+
+
+kw[arg_splited[0]] = arg_splited[1]
+except SyntaxError:
             print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
         new_instance = HBNBCommand.classes[arg_list[0]](**kw)
         new_instance.save()
-
-
         """ Create an object of any class with given parameters"""
         """ Create an object of any class with given parameters"""
 
@@ -189,9 +186,10 @@ class HBNBCommand(cmd.Cmd):
             attributes[key] = value
 
             # Provide a default value for 'updated_at' if not present
-            attributes['updated_at'] = attributes.get('updated_at', datetime.utcnow())
+            attributes['updated_at'] = attributes.get('updated_at',
+        datetime.utcnow())
 
-        # Create an instance of the specified class
+            # Create an instance of the specified class
         new_instance = HBNBCommand.classes[class_name](**attributes)
 
         # Save the instance and print its ID
