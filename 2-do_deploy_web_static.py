@@ -10,32 +10,6 @@ from datetime import datetime
 env.hosts = ['54.237.218.141', '34.232.53.132']
 
 
-def do_pack():
-    """
-    Generates a .tgz archive from the contents of the
-    web_static folder of your AirBnB Clone repo.
-    """
-    try:
-        # Create the versions folder if it doesn't exist
-        local("mkdir -p versions")
-
-        # Generate current timestamp for the archive name
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-
-        # Define the archive name
-        archive_name = f"web_static_{timestamp}.tgz"
-
-        # Compress the content of the web_static folder into the archive
-        local(f"tar -czvf versions/{archive_name} web_static")
-
-        # Return archive path if successful
-        return f"versions/{archive_name}"
-
-    # If an error occurs
-    except Exception as e:
-        return None
-
-
 def do_deploy(archive_path):
     """
     A Fabric script that distributes an archive to your web servers
@@ -52,8 +26,9 @@ def do_deploy(archive_path):
         # Extract the archive to
         # /data/web_static/releases/<filename without extension>/
         archive_filename = os.path.basename(archive_path)
-        release_folder =
-        f"/data/web_static/releases/{archive_filename.split('.')[0]}"
+        release_folder = (
+                f"/data/web_static/releases/{archive_filename.split('.')[0]}"
+                )
         run(f"mkdir -p {release_folder}")
         run(f"tar -xzf /tmp/{archive_filename} -C {release_folder}")
 
