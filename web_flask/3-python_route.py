@@ -61,7 +61,7 @@ def python(text):
     by the valie of the text variable.
     """
     formatted_text = text.replace('_', ' ')
-    return f"Python {formatted_text}"  
+    return f"Python {formatted_text}"
 
 
 if __name__ == "__main__":
