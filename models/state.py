@@ -12,7 +12,7 @@ import shlex
 class State(BaseModel, Base):
     """
     This is the class for State
-    
+
     Attributes:
     name (str): The name of the state.
     cities (relationship): A relationship to the City class.
