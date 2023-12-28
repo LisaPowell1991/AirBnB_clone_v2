@@ -9,16 +9,15 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        from models import storage
         """
         Returns a dictionary or a filtered dictionary
         of models currently in storage
         """
         if cls is None:
-            return storage.__objects
+            return FileStorage.__objects
         else:
             filtered_dict = {}
-            for key, value in storage.__objects.items():
+            for key, value in FileStorage.__objects.items():
                 if key.split('.')[0] == cls.__name__:
                     filtered_dict[key] = value
             return filtered_dict
@@ -29,17 +28,15 @@ class FileStorage:
         self.all()[key] = obj
 
     def save(self):
-        from models import storage
         """Saves storage dictionary to file"""
         with open(storage.__file_path, 'w') as f:
             temp = {
                     key: val.to_dict() for key,
-                    val in storage.__objects.items()}
+                    val in FileStorage.__objects.items()}
             json.dump(temp, f)
 
     def reload(self):
         """Loads storage dictionary from file"""
-        from models import storage
         from models.base_model import BaseModel
         from models.user import User
         from models.place import Place
@@ -54,7 +51,7 @@ class FileStorage:
             'Review': Review
         }
         try:
-            with open(storage.__file_path, 'r') as f:
+            with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
                     self.all()[key] = classes[val['__class__']](**val)
@@ -72,4 +69,5 @@ class FileStorage:
         Closes the storage by calling the reload() method
         for deserializing the JSON file to objects.
         """
-        self.reload()
+        from models import storage
+        storage.reload()

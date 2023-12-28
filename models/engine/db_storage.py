@@ -91,7 +91,7 @@ class DBStorage:
         - obj: Optional. If provided, deletes the specified object.
 
         """
-        if obj:
+        if obj is not None:
             self.__session.delete(obj)
 
     def reload(self):
