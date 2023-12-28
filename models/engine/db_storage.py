@@ -2,7 +2,7 @@
 """ new class for sqlAlchemy """
 from os import getenv
 from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import (create_engine)
+from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import Base
 from models.state import State
@@ -14,11 +14,19 @@ from models.amenity import Amenity
 
 
 class DBStorage:
-    """ create tables in environmental"""
+    """
+    This class creates tables in a MySQL database using SQLAlchemy.
+    """
     __engine = None
     __session = None
 
     def __init__(self):
+        """
+        Initializes a new instance of the DBStorage class.
+
+        It creates a connection to the MySQL database based on the
+        environmental variables and sets up the SQLAlchemy engine.
+        """
         user = getenv("HBNB_MYSQL_USER")
         passwd = getenv("HBNB_MYSQL_PWD")
         db = getenv("HBNB_MYSQL_DB")
@@ -33,9 +41,15 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """returns a dictionary
-        Return:
-            returns a dictionary of __object
+        """
+        Returns a dictionary of objects based on the optional class filter.
+
+        Args:
+        - cls (class): Optional. If provided, returns a filtered dictionary
+          containing only instances of the specified class.
+
+        Returns:
+        - dict: A dictionary of objects or a filtered dictionary based on cls
         """
         dic = {}
         if cls:
@@ -46,32 +60,44 @@ class DBStorage:
                 key = "{}.{}".format(type(elem).__name__, elem.id)
                 dic[key] = elem
         else:
-            lista = [State, City, User, Place, Review, Amenity]
-            for clase in lista:
-                query = self.__session.query(clase)
+            classes = [State, City, User, Place, Review, Amenity]
+            for cls in classes:
+                query = self.__session.query(cls)
                 for elem in query:
                     key = "{}.{}".format(type(elem).__name__, elem.id)
                     dic[key] = elem
         return (dic)
 
     def new(self, obj):
-        """add a new element in the table
+        """
+        add a new element in the table.
+
+        Args:
+        - obj: An instance of a model class to be added to the session.
         """
         self.__session.add(obj)
 
     def save(self):
-        """save changes
+        """
+        Commits changes to the current database session.
         """
         self.__session.commit()
 
     def delete(self, obj=None):
-        """delete an element in the table
+        """
+        delete an element in the table
+
+        Args:
+        - obj: Optional. If provided, deletes the specified object.
+
         """
         if obj:
-            self.session.delete(obj)
+            self.__session.delete(obj)
 
     def reload(self):
-        """configuration
+        """
+        Configures the database by creating all tables and setting up
+        a new session with the SQLAlchemy engine.
         """
         Base.metadata.create_all(self.__engine)
         sec = sessionmaker(bind=self.__engine, expire_on_commit=False)
@@ -79,6 +105,7 @@ class DBStorage:
         self.__session = Session()
 
     def close(self):
-        """ calls remove()
-        """
+        """ Closes the current database session. """
         self.__session.close()
+
+

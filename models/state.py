@@ -10,9 +10,12 @@ import shlex
 
 
 class State(BaseModel, Base):
-    """This is the class for State
+    """
+    This is the class for State
+    
     Attributes:
-        name: input name
+    name (str): The name of the state.
+    cities (relationship): A relationship to the City class.
     """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
@@ -22,17 +25,15 @@ class State(BaseModel, Base):
     @property
     def cities(self):
         var = models.storage.all()
-        lista = []
-        result = []
+        city_list = []
+
         for key in var:
             city = key.replace('.', ' ')
             city = shlex.split(city)
             if (city[0] == 'City'):
-                lista.append(var[key])
-        for elem in lista:
-            if (elem.state_id == self.id):
-                result.append(elem)
-        return (result)
+                city_list.append(var[key])
+        result = [elem for elem in city_list if elem.state_id == self.id]
+        return result
 
     def __init__(self, *args, **kwargs):
         """ Initialize State instance """
