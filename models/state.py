@@ -4,10 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
-import models
 from models.city import City
 import shlex
-from models import storage
+
 
 class State(BaseModel, Base):
     """
@@ -24,6 +23,7 @@ class State(BaseModel, Base):
 
     @property
     def cities(self):
+        from models import storage
         var = models.storage.all()
         city_list = []
 
@@ -38,4 +38,3 @@ class State(BaseModel, Base):
         """ Initialize State instance """
         super().__init__(*args, **kwargs)
         self.name = ""
-

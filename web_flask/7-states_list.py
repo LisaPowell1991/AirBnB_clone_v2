@@ -16,7 +16,7 @@ def teardown_db(exception):
 
 
 
-@app.route('/states_list', struct_slashes=False)
+@app.route('/states_list', strict_slashes=False)
 def states_list():
     """
     Displays a HTML page with a list of all State objects.
