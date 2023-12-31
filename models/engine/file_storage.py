@@ -13,6 +13,7 @@ class FileStorage:
         Returns a dictionary or a filtered dictionary
         of models currently in storage
         """
+        from models import storage
         if cls is None:
             return FileStorage.__objects
         else:
@@ -24,11 +25,13 @@ class FileStorage:
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
+        from models import storage
         key = obj.to_dict()['__class__'] + '.' + obj.id
         self.all()[key] = obj
 
     def save(self):
         """Saves storage dictionary to file"""
+        from models import storage
         with open(storage.__file_path, 'w') as f:
             temp = {
                     key: val.to_dict() for key,
@@ -38,6 +41,7 @@ class FileStorage:
     def reload(self):
         """Loads storage dictionary from file"""
         from models.base_model import BaseModel
+        from models import storage
         from models.user import User
         from models.place import Place
         from models.state import State
@@ -60,6 +64,7 @@ class FileStorage:
 
     def delete(self, obj=None):
         """Deletes obj from __objects if it's inside"""
+        from models import storage
         if obj is not None:
             key = obj.to_dict()['__class__'] + '.' + obj.id
             self.all().pop(key, None)
@@ -69,5 +74,4 @@ class FileStorage:
         Closes the storage by calling the reload() method
         for deserializing the JSON file to objects.
         """
-        from models import storage
-        storage.reload()
+        self.reload()

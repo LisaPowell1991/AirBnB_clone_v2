@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String
 import models
 from models.city import City
 import shlex
-
+from models import storage
 
 class State(BaseModel, Base):
     """
@@ -30,12 +30,12 @@ class State(BaseModel, Base):
         for key in var:
             city = key.replace('.', ' ')
             city = shlex.split(city)
-            if (city[0] == 'City'):
+            if (city[0] == 'City' and var[key].state_id == self.id):
                 city_list.append(var[key])
-        result = [elem for elem in city_list if elem.state_id == self.id]
-        return result
+        return city_list
 
     def __init__(self, *args, **kwargs):
         """ Initialize State instance """
         super().__init__(*args, **kwargs)
         self.name = ""
+

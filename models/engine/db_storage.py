@@ -51,6 +51,8 @@ class DBStorage:
         Returns:
         - dict: A dictionary of objects or a filtered dictionary based on cls
         """
+        from models import storage
+
         dic = {}
         if cls:
             if type(cls) is str:
@@ -71,7 +73,7 @@ class DBStorage:
     def new(self, obj):
         """
         add a new element in the table.
-
+        
         Args:
         - obj: An instance of a model class to be added to the session.
         """
@@ -99,6 +101,11 @@ class DBStorage:
         Configures the database by creating all tables and setting up
         a new session with the SQLAlchemy engine.
         """
+        from models import storage
+
+        if self.__session is not None:
+            self.__session.commit()
+
         Base.metadata.create_all(self.__engine)
         sec = sessionmaker(bind=self.__engine, expire_on_commit=False)
         Session = scoped_session(sec)
