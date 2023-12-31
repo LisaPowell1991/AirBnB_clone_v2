@@ -73,7 +73,7 @@ class DBStorage:
     def new(self, obj):
         """
         add a new element in the table.
-        
+
         Args:
         - obj: An instance of a model class to be added to the session.
         """
