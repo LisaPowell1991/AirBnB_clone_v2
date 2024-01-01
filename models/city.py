@@ -21,10 +21,10 @@ class City(BaseModel, Base):
     places = relationship(
             "Place", cascade='all, delete, delete-orphan', backref="cities")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, name="", *args, **kwargs):
         """Instantiates a new City"""
         if 'name' not in kwargs:
-            self.name = ""
+            self.name = name
         if 'state_id' not in kwargs:
             self.state_id = ""
         super().__init__(*args, **kwargs)

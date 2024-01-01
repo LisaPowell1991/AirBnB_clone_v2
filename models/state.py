@@ -34,7 +34,7 @@ class State(BaseModel, Base):
                 city_list.append(var[key])
         return city_list
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, name="", *args, **kwargs):
         """ Initialize State instance """
         super().__init__(*args, **kwargs)
-        self.name = ""
+        self.name = name
