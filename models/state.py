@@ -24,7 +24,7 @@ class State(BaseModel, Base):
     @property
     def cities(self):
         from models import storage
-        var = models.storage.all()
+        var = storage.all()
         city_list = []
 
         for key in var:
