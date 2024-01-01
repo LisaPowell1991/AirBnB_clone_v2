@@ -15,7 +15,7 @@ class City(BaseModel, Base):
         name: input name
     """
     __tablename__ = "cities"
-    id = Column(Integer, primary_key=True)
+    id = Column(String(60), primary_key=True)
     name = Column(String(128), nullable=False)
     state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
     places = relationship(
