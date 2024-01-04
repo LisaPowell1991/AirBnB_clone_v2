@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-"""This is the place class"""
 from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Table, String, Integer, Float, ForeignKey
@@ -7,13 +5,10 @@ from sqlalchemy.orm import relationship
 from os import getenv
 import models
 
-
-place_amenity = Table("place_amenity", Base.metadata, Column(
-                "place_id", String(60), ForeignKey("places.id"),
-                primary_key=True, nullable=False), Column(
-                "amenity_id", String(60), ForeignKey("amenities.id"),
-                primary_key=True, nullable=False))
-
+place_amenity = Table("place_amenity", Base.metadata, 
+    Column("place_id", String(60), ForeignKey("places.id"), primary_key=True, nullable=False), 
+    Column("amenity_id", String(60), ForeignKey("amenities.id"), primary_key=True, nullable=False)
+)
 
 class Place(BaseModel, Base):
     """This is the class for Place
@@ -31,8 +26,7 @@ class Place(BaseModel, Base):
         amenity_ids: list of Amenity ids
     """
     __tablename__ = "places"
-    id = Column(String(60), primary_key=True)
-    city_id = Column(String(60), ForeignKey('cities.id'), nullable=True)
+    city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
     name = Column(String(128), nullable=False)
     description = Column(String(1024))
@@ -40,66 +34,40 @@ class Place(BaseModel, Base):
     number_bathrooms = Column(Integer, nullable=False, default=0)
     max_guest = Column(Integer, nullable=False, default=0)
     price_by_night = Column(Integer, nullable=False, default=0)
-    latitude = Column(Float)
-    longitude = Column(Float)
-    amenity_ids = []
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    reviews = relationship(
+            "Review", cascade='all, delete, delete-orphan', backref="place")
+    amenities = relationship("Amenties", secondary="place_amenity",
+                             viewonly=False)
 
-    if getenv("HBNB_TYPE_STORAGE") == "db":
-        reviews = relationship(
-                "Review", cascade='all, delete, delete-orphan',
-                backref="place")
-
-        amenities = relationship(
-                "Amenity", secondary=place_amenity, viewonly=False,
-                back_populates="place_amenities")
-    else:
+    if getenv("HBNB_TYPE_STORAGE", None) != "db":
         @property
         def reviews(self):
             """ Returns list of reviews.id """
-            var = models.storage.all()
-            lista = []
-            result = []
-            for key in var:
-                review = key.replace('.', ' ')
-                review = shlex.split(review)
-                if (review[0] == 'Review'):
-                    lista.append(var[key])
-            for elem in lista:
-                if (elem.place_id == self.id):
-                    result.append(elem)
-            return (result)
+            from models import storage
+            review_list = []
+            for review in list(storage.all(Review).values()):
+                if review.place_id == self.id:
+                    review_list.append(review)
+            return review_list
 
         @property
         def amenities(self):
             """ Returns list of amenity ids """
-            return self.amenity_ids
+            amenity_list = []
+            for amenity in list(models.storage.all(Amenity).values()):
+                if amenity.id in self.amenity_ids:
+                    amenity_list.append(amenity)
+            return amenity_list
 
         @amenities.setter
-        def amenities(self, obj=None):
+        def amenities(self, value):
             """ Appends amenity ids to the attribute """
-            if type(obj) is Amenity and obj.id not in self.amenity_ids:
-                self.amenity_ids.append(obj.id)
+            def amenities(self, value):
+                if type(value) == Amenity:
+                    self.amenity_ids.append(value.id)
 
         def __init__(self, *args, **kwargs):
             """Instantiates a new Place"""
-            if 'city_id' not in kwargs:
-                self.city_id = ""
-            if 'user_id' not in kwargs:
-                self.user_id = ""
-            if 'name' not in kwargs:
-                self.name = ""
-            if 'description' not in kwargs:
-                self.description = ""
-            if 'number_rooms' not in kwargs:
-                self.number_rooms = 0
-            if 'number_bathrooms' not in kwargs:
-                self.number_bathrooms = 0
-            if 'max_guest' not in kwargs:
-                self.max_guest = 0
-            if 'price_by_night' not in kwargs:
-                self.price_by_night = 0
-            if 'latitude' not in kwargs:
-                self.latitude = None
-            if 'longitude' not in kwargs:
-                self.longitude = None
             super().__init__(*args, **kwargs)
