@@ -18,7 +18,7 @@ class State(BaseModel, Base):
     """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
-    cities = relationship(
+    cities_relationship = relationship(
             "City", cascade='all, delete, delete-orphan', backref="states")
 
     @property
